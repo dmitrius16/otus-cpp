@@ -32,10 +32,69 @@ void ip_storage::process_ip_addresses() {
     std::sort(view_sorted_ip_.begin(), view_sorted_ip_.end(), [](const ip_info_s* a, const ip_info_s* b) {
         return a->ip_num_repr > b->ip_num_repr;
     });
+    auto ip_first_byte_eq_1 = get_addr_where_first_byte_eq(view_sorted_ip_, 14);
+    auto ip_two_bytes_46_70 = get_addr_with_first_two_bytes_eq(view_sorted_ip_,46, 70);
+    auto ip_any_byte_46 = get_addr_where_any_of_byte_eq(view_sorted_ip_, 46);
+    output_processed_ip(std::cout, view_sorted_ip_);
+    output_processed_ip(std::cout, ip_first_byte_eq_1);
+    output_processed_ip(std::cout, ip_two_bytes_46_70);
+    output_processed_ip(std::cout, ip_any_byte_46);
+
+
 }
 
-void ip_storage::output_processed_ip(std::ostream& out) const {
-    for (auto ip_info : view_sorted_ip_) {
+sorted_ip_t ip_storage::get_addr_where_first_byte_eq(const sorted_ip_t& view_sorted_ip, uint8_t first_byte) {
+    std::vector<const ip_info_s*> res;
+    
+    auto it_start = std::lower_bound(view_sorted_ip.begin(), view_sorted_ip.end(), first_byte,
+        [](const ip_info_s* ptr, uint32_t val) { return ptr->ip_byte_repr[0] > val; });
+    
+    if (it_start != view_sorted_ip.end()) {
+        auto it_end = std::upper_bound(view_sorted_ip.begin(), view_sorted_ip.end(), first_byte,
+            [](uint32_t val, const ip_info_s* ptr) { return ptr->ip_byte_repr[0] < val; });
+        res.assign(it_start, it_end);
+    }
+    return res;
+}
+
+
+sorted_ip_t ip_storage::get_addr_with_first_two_bytes_eq(const sorted_ip_t& view_sorted_ip, uint8_t first_byte, 
+                                                         uint8_t second_byte) {
+    sorted_ip_t res;
+    auto sorted_first_byte = get_addr_where_first_byte_eq(view_sorted_ip, first_byte);
+    auto it_start = std::lower_bound(sorted_first_byte.begin(), sorted_first_byte.end(), second_byte,
+        [](const ip_info_s* ptr, uint32_t val) {return ptr->ip_byte_repr[1] > val;});
+    if (it_start != view_sorted_ip_.end()) {
+        auto it_end = std::upper_bound(sorted_first_byte.begin(), sorted_first_byte.end(), second_byte, 
+            [](uint32_t val, const ip_info_s* ptr){return ptr->ip_byte_repr[1] < val;});
+        res.assign(it_start, it_end);
+    }
+    return res; 
+}
+
+sorted_ip_t ip_storage::get_addr_where_any_of_byte_eq(const sorted_ip_t& view_sorted_ip, uint8_t byte_val) {
+    auto st_it = view_sorted_ip.begin();
+    auto end_it = view_sorted_ip.end();
+    sorted_ip_t res;
+    do {
+        st_it = std::find_if(st_it, end_it, [byte_val](const ip_info_s* ip_addr) {
+        return std::any_of(ip_addr->ip_byte_repr.begin(), 
+                             ip_addr->ip_byte_repr.end(),
+                             [byte_val](uint8_t val){return val == byte_val;});
+        });
+        
+        if (st_it != end_it) {
+            res.push_back(*st_it);
+            ++st_it;
+        }
+    } while (st_it != end_it);
+    return res;
+}
+
+
+void ip_storage::output_processed_ip(std::ostream& out, const sorted_ip_t &ip) const {
+    for (auto ip_info : ip) {
         out << ip_info->ip_str_repr << std::endl;
     }
+    std::cout << "----------------" << std::endl;
 }

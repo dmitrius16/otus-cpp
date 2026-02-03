@@ -16,11 +16,16 @@ struct ip_info_s {
         : ip_str_repr(std::move(str)), ip_byte_repr(arr), ip_num_repr(num) {}
 };
 
+using sorted_ip_t = std::vector<const ip_info_s*>;
+
 class ip_storage {
 public:
-    void add_ip_addr(std::string ip_addr_str);
+    void add_ip_addr(std::string);
     void process_ip_addresses();
-    void output_processed_ip(std::ostream& out) const;
+    void output_processed_ip(std::ostream&, const sorted_ip_t&) const;
+    sorted_ip_t get_addr_where_first_byte_eq(const sorted_ip_t&, uint8_t);
+    sorted_ip_t get_addr_with_first_two_bytes_eq(const sorted_ip_t&, uint8_t, uint8_t);
+    sorted_ip_t get_addr_where_any_of_byte_eq(const sorted_ip_t&, uint8_t);
 private:
     std::deque<ip_info_s> ip_strg_;
     std::vector<const ip_info_s*> view_sorted_ip_;
