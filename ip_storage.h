@@ -23,8 +23,8 @@ public:
     void add_ip_addr(std::string);
     void process_ip_addresses();
     void output_processed_ip(std::ostream&, const sorted_ip_t&) const;
-    sorted_ip_t get_addr_where_first_byte_eq(const sorted_ip_t&, uint8_t);
-    sorted_ip_t get_addr_with_first_two_bytes_eq(const sorted_ip_t&, uint8_t, uint8_t);
+    sorted_ip_t get_addr_where_first_byte(const sorted_ip_t&, uint8_t);
+    sorted_ip_t get_addr_with_first_two_bytes(const sorted_ip_t&, uint8_t, uint8_t);
     sorted_ip_t get_addr_where_any_of_byte_eq(const sorted_ip_t&, uint8_t);
 private:
     std::deque<ip_info_s> ip_strg_;

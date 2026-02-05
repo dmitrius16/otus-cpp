@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cstdlib>
+#include <functional>
 #include <string>
 #include <stdexcept>
 #include <algorithm>
@@ -32,8 +33,8 @@ void ip_storage::process_ip_addresses() {
     std::sort(view_sorted_ip_.begin(), view_sorted_ip_.end(), [](const ip_info_s* a, const ip_info_s* b) {
         return a->ip_num_repr > b->ip_num_repr;
     });
-    auto ip_first_byte_eq_1 = get_addr_where_first_byte_eq(view_sorted_ip_, 14);
-    auto ip_two_bytes_46_70 = get_addr_with_first_two_bytes_eq(view_sorted_ip_,46, 70);
+    auto ip_first_byte_eq_1 = get_addr_where_first_byte(view_sorted_ip_, 1);
+    auto ip_two_bytes_46_70 = get_addr_with_first_two_bytes(view_sorted_ip_,46, 70);
     auto ip_any_byte_46 = get_addr_where_any_of_byte_eq(view_sorted_ip_, 46);
     output_processed_ip(std::cout, view_sorted_ip_);
     output_processed_ip(std::cout, ip_first_byte_eq_1);
@@ -43,7 +44,7 @@ void ip_storage::process_ip_addresses() {
 
 }
 
-sorted_ip_t ip_storage::get_addr_where_first_byte_eq(const sorted_ip_t& view_sorted_ip, uint8_t first_byte) {
+sorted_ip_t ip_storage::get_addr_where_first_byte(const sorted_ip_t& view_sorted_ip, uint8_t first_byte) {
     std::vector<const ip_info_s*> res;
     
     auto it_start = std::lower_bound(view_sorted_ip.begin(), view_sorted_ip.end(), first_byte,
@@ -58,10 +59,10 @@ sorted_ip_t ip_storage::get_addr_where_first_byte_eq(const sorted_ip_t& view_sor
 }
 
 
-sorted_ip_t ip_storage::get_addr_with_first_two_bytes_eq(const sorted_ip_t& view_sorted_ip, uint8_t first_byte, 
+sorted_ip_t ip_storage::get_addr_with_first_two_bytes(const sorted_ip_t& view_sorted_ip, uint8_t first_byte, 
                                                          uint8_t second_byte) {
     sorted_ip_t res;
-    auto sorted_first_byte = get_addr_where_first_byte_eq(view_sorted_ip, first_byte);
+    auto sorted_first_byte = get_addr_where_first_byte(view_sorted_ip, first_byte);
     auto it_start = std::lower_bound(sorted_first_byte.begin(), sorted_first_byte.end(), second_byte,
         [](const ip_info_s* ptr, uint32_t val) {return ptr->ip_byte_repr[1] > val;});
     if (it_start != view_sorted_ip_.end()) {
@@ -96,5 +97,4 @@ void ip_storage::output_processed_ip(std::ostream& out, const sorted_ip_t &ip) c
     for (auto ip_info : ip) {
         out << ip_info->ip_str_repr << std::endl;
     }
-    std::cout << "----------------" << std::endl;
 }
