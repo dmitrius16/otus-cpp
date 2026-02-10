@@ -10,20 +10,20 @@ option(WITH_BOOST_TEST "Whether to build Boost test" ON)
 configure_file(version.h.in version.h)
 
 add_executable(ip_filter main.cpp ip_storage.cpp)
-add_library(helloworld lib.cpp)
+add_library(version lib.cpp)
 add_library(str_utils_lib string_utils.cpp)
 
-set_target_properties(ip_filter helloworld str_utils_lib PROPERTIES
+set_target_properties(ip_filter version str_utils_lib PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
 )
 
-target_include_directories(helloworld
+target_include_directories(version
     PRIVATE "${CMAKE_BINARY_DIR}"
 )
 
 target_link_libraries(ip_filter PRIVATE
-    helloworld
+    version
     str_utils_lib
 )
 
@@ -45,7 +45,7 @@ if(WITH_BOOST_TEST)
 
     target_link_libraries(test_version
         ${Boost_LIBRARIES}
-        helloworld
+        version
     )
     target_link_libraries(test_string_utils
         ${Boost_LIBRARIES}
@@ -61,7 +61,7 @@ if (MSVC)
     target_compile_options(ip_filter PRIVATE
         /W4
     )
-    target_compile_options(helloworld PRIVATE
+    target_compile_options(version PRIVATE
         /W4
     )
     target_compile_options(str_utils_lib PRIVATE
@@ -82,7 +82,7 @@ else ()
     target_compile_options(ip_filter PRIVATE
         -Wall -Wextra -pedantic -Werror
     )
-    target_compile_options(helloworld PRIVATE
+    target_compile_options(version PRIVATE
         -Wall -Wextra -pedantic -Werror
     )
     target_compile_options(str_utils_lib PRIVATE

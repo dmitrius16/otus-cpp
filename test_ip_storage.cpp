@@ -11,13 +11,13 @@
 BOOST_AUTO_TEST_SUITE(test_ip_storage)
 
 BOOST_AUTO_TEST_CASE(test_sorting_consistency) {
-    // already sorted addresses 
+    // already sorted addresses
     std::vector<std::string> sorted_ips = {
         "222.173.235.246",
-        "221.173.235.246",
-        "222.172.235.246",
-        "222.173.234.246",
         "222.173.235.245",
+        "222.173.234.246",
+        "222.172.235.246",
+        "221.173.235.246",
         "192.168.0.10",
         "185.46.87.231",
         "10.10.0.1"
@@ -112,7 +112,6 @@ BOOST_AUTO_TEST_CASE(test_get_addr_where_any_of_byte_eq) {
         result_strs.push_back(p->ip_str_repr);
     }
 
-    // Should include all IPs that have 46 in any byte, in the order they appear in sorted
     std::vector<std::string> expected = {"192.168.1.46", "46.1.1.1", "1.46.1.1", "1.1.46.1", "1.1.1.46"};
     BOOST_CHECK(result_strs == expected);
 }
