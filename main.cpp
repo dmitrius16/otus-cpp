@@ -18,12 +18,9 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char* argv[]) {
 			ip_strg.add_ip_addr(std::move(v.at(0)));
         }
 
-		ip_strg.process_ip_addresses();
-		//ip_strg.output_processed_ip(std::cout);
+		process_ip_addresses(ip_strg);
 	} catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;
 	}
-
-
 	return 0;
 }

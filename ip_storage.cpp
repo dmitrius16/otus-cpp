@@ -1,10 +1,10 @@
 #include <cassert>
 #include <cstdlib>
-#include <functional>
 #include <string>
 #include <stdexcept>
 #include <algorithm>
 #include <iostream>
+#include <utility>
 #include "ip_storage.h"
 #include "string_utils.h"
 
@@ -29,19 +29,23 @@ void ip_storage::add_ip_addr(std::string ip_addr_str) {
     view_sorted_ip_.push_back(&new_info);
 }
 
-void ip_storage::process_ip_addresses() {
+const sorted_ip_t& ip_storage::sort_ip_addresses() {
     std::sort(view_sorted_ip_.begin(), view_sorted_ip_.end(), [](const ip_info_s* a, const ip_info_s* b) {
         return a->ip_num_repr > b->ip_num_repr;
     });
-    auto ip_first_byte_eq_1 = get_addr_where_first_byte(view_sorted_ip_, 1);
-    auto ip_two_bytes_46_70 = get_addr_with_first_two_bytes(view_sorted_ip_,46, 70);
-    auto ip_any_byte_46 = get_addr_where_any_of_byte_eq(view_sorted_ip_, 46);
-    output_processed_ip(std::cout, view_sorted_ip_);
+    return view_sorted_ip_;
+}
+
+void process_ip_addresses(ip_storage& strg) {
+    auto sorted_ip = strg.sort_ip_addresses();    
+    auto ip_first_byte_eq_1 = strg.get_addr_where_first_byte(sorted_ip, 1);
+    auto ip_two_bytes_46_70 = strg.get_addr_with_first_two_bytes(sorted_ip, 46, 70);
+    auto ip_any_byte_46 = strg.get_addr_where_any_of_byte_eq(sorted_ip, 46);
+    
+    output_processed_ip(std::cout, sorted_ip);
     output_processed_ip(std::cout, ip_first_byte_eq_1);
     output_processed_ip(std::cout, ip_two_bytes_46_70);
     output_processed_ip(std::cout, ip_any_byte_46);
-
-
 }
 
 sorted_ip_t ip_storage::get_addr_where_first_byte(const sorted_ip_t& view_sorted_ip, uint8_t first_byte) {
@@ -93,7 +97,7 @@ sorted_ip_t ip_storage::get_addr_where_any_of_byte_eq(const sorted_ip_t& view_so
 }
 
 
-void ip_storage::output_processed_ip(std::ostream& out, const sorted_ip_t &ip) const {
+void output_processed_ip(std::ostream& out, const sorted_ip_t &ip) {
     for (auto ip_info : ip) {
         out << ip_info->ip_str_repr << std::endl;
     }
