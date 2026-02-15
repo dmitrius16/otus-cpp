@@ -23,12 +23,11 @@ BOOST_AUTO_TEST_CASE(test_sorting_consistency) {
         "10.10.0.1"
     };
 
-    // Create etalon storage with sorted IPs
     ip_storage etalon;
     for (const auto& ip : sorted_ips) {
         etalon.add_ip_addr(ip);
     }
-    //etalon.sort_ip_addresses(); 
+    //etalon.sort_ip_addresses();  list of ip have been already sorted
     auto etalon_sorted = etalon.get_sorted_ip();
 
     // Shuffle the IPs
