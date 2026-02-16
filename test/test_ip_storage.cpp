@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(test_get_addr_where_first_byte) {
     storage.add_ip_addr("1.3.5.7");
     auto sorted = storage.sort_ip_addresses();
 
-    auto result = storage.get_addr_where_first_byte(sorted, 1);
+    auto result = storage.get_addr(sorted, 1);
 
     std::vector<std::string> result_strs;
     for (const auto* p : result) {
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(test_get_addr_with_first_two_bytes) {
     storage.add_ip_addr("47.70.1.1");
     auto sorted = storage.sort_ip_addresses();
 
-    auto result = storage.get_addr_with_first_two_bytes(sorted, 46, 70);
+    auto result = storage.get_addr(sorted, 46, 70);
 
     std::vector<std::string> result_strs;
     for (const auto* p : result) {
@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(test_get_addr_where_any_of_byte_eq) {
     storage.add_ip_addr("2.2.2.2");
     auto sorted = storage.sort_ip_addresses();
 
-    auto result = storage.get_addr_where_any_of_byte_eq(sorted, 46);
+    auto result = storage.get_addr_with_byte(sorted, 46);
 
     std::vector<std::string> result_strs;
     for (const auto* p : result) {

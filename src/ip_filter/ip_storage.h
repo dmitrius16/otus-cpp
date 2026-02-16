@@ -30,9 +30,9 @@ public:
     
     const sorted_ip_t& sort_ip_addresses();
     const sorted_ip_t& get_sorted_ip() const {return view_sorted_ip_;}    
-    sorted_ip_t get_addr_where_first_byte(const sorted_ip_t&, uint8_t);
-    sorted_ip_t get_addr_with_first_two_bytes(const sorted_ip_t&, uint8_t, uint8_t);
-    sorted_ip_t get_addr_where_any_of_byte_eq(const sorted_ip_t&, uint8_t);
+    sorted_ip_t get_addr(const sorted_ip_t&, uint8_t) const;
+    sorted_ip_t get_addr(const sorted_ip_t&, uint8_t, uint8_t) const;
+    sorted_ip_t get_addr_with_byte(const sorted_ip_t&, uint8_t) const;
 private:
     std::deque<ip_info_s> ip_strg_;
     sorted_ip_t view_sorted_ip_;
