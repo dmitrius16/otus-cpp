@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(test_sorting_consistency) {
     BOOST_CHECK(etalon_strs == test_strs);
 }
 
-BOOST_AUTO_TEST_CASE(test_get_addr_where_first_byte) {
+BOOST_AUTO_TEST_CASE(test_get_addr_with_first_byte) {
     ip_storage storage;
     storage.add_ip_addr("1.2.3.4");
     storage.add_ip_addr("1.1.1.1");
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(test_get_addr_where_first_byte) {
     BOOST_CHECK(result_strs == expected);
 }
 
-BOOST_AUTO_TEST_CASE(test_get_addr_with_first_two_bytes) {
+BOOST_AUTO_TEST_CASE(test_get_addr_with_two_bytes) {
     ip_storage storage;
     storage.add_ip_addr("46.70.1.1");
     storage.add_ip_addr("46.70.2.2");
@@ -91,6 +91,44 @@ BOOST_AUTO_TEST_CASE(test_get_addr_with_first_two_bytes) {
     }
 
     std::vector<std::string> expected = {"46.70.2.2", "46.70.1.1"}; // descending order
+    BOOST_CHECK(result_strs == expected);
+}
+
+BOOST_AUTO_TEST_CASE(test_get_addr_with_three_bytes) {
+    ip_storage storage;
+    storage.add_ip_addr("46.70.2.1");
+    storage.add_ip_addr("46.70.2.2");
+    storage.add_ip_addr("46.71.1.1");
+    storage.add_ip_addr("47.70.1.1");
+    auto sorted = storage.sort_ip_addresses();
+
+    auto result = storage.get_addr(sorted, 46, 70, 2);
+
+    std::vector<std::string> result_strs;
+    for (const auto* p : result) {
+        result_strs.push_back(p->ip_str_repr);
+    }
+
+    std::vector<std::string> expected = {"46.70.2.2", "46.70.2.1"}; // descending order
+    BOOST_CHECK(result_strs == expected);
+}
+
+BOOST_AUTO_TEST_CASE(test_get_addr_with_four_bytes) {
+    ip_storage storage;
+    storage.add_ip_addr("46.70.2.1");
+    storage.add_ip_addr("46.70.2.2");
+    storage.add_ip_addr("46.71.1.1");
+    storage.add_ip_addr("47.70.1.1");
+    auto sorted = storage.sort_ip_addresses();
+
+    auto result = storage.get_addr(sorted, 46, 71, 1, 1);
+
+    std::vector<std::string> result_strs;
+    for (const auto* p : result) {
+        result_strs.push_back(p->ip_str_repr);
+    }
+
+    std::vector<std::string> expected = {"46.71.1.1"};
     BOOST_CHECK(result_strs == expected);
 }
 

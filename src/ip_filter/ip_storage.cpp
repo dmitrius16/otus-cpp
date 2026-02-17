@@ -2,7 +2,6 @@
 #include <cstdlib>
 #include <string>
 #include <stdexcept>
-#include <algorithm>
 #include <iostream>
 #include <utility>
 #include "ip_storage.h"
@@ -41,40 +40,11 @@ void process_ip_addresses(ip_storage& strg) {
     auto ip_first_byte_eq_1 = strg.get_addr(sorted_ip, 1);
     auto ip_two_bytes_46_70 = strg.get_addr(sorted_ip, 46, 70);
     auto ip_any_byte_46 = strg.get_addr_with_byte(sorted_ip, 46);
-    
+
     output_processed_ip(std::cout, sorted_ip);
     output_processed_ip(std::cout, ip_first_byte_eq_1);
     output_processed_ip(std::cout, ip_two_bytes_46_70);
     output_processed_ip(std::cout, ip_any_byte_46);
-}
-
-sorted_ip_t ip_storage::get_addr(const sorted_ip_t& view_sorted_ip, uint8_t first_byte) const {
-    std::vector<const ip_info_s*> res;
-    
-    auto it_start = std::lower_bound(view_sorted_ip.begin(), view_sorted_ip.end(), first_byte,
-        [](const ip_info_s* ptr, uint32_t val) { return ptr->ip_byte_repr[0] > val; });
-    
-    if (it_start != view_sorted_ip.end()) {
-        auto it_end = std::upper_bound(view_sorted_ip.begin(), view_sorted_ip.end(), first_byte,
-            [](uint32_t val, const ip_info_s* ptr) { return ptr->ip_byte_repr[0] < val; });
-        res.assign(it_start, it_end);
-    }
-    return res;
-}
-
-
-sorted_ip_t ip_storage::get_addr(const sorted_ip_t& view_sorted_ip, uint8_t first_byte, 
-                                                         uint8_t second_byte) const {
-    sorted_ip_t res;
-    auto sorted_first_byte = get_addr(view_sorted_ip, first_byte);
-    auto it_start = std::lower_bound(sorted_first_byte.begin(), sorted_first_byte.end(), second_byte,
-        [](const ip_info_s* ptr, uint32_t val) {return ptr->ip_byte_repr[1] > val;});
-    if (it_start != view_sorted_ip_.end()) {
-        auto it_end = std::upper_bound(sorted_first_byte.begin(), sorted_first_byte.end(), second_byte, 
-            [](uint32_t val, const ip_info_s* ptr){return ptr->ip_byte_repr[1] < val;});
-        res.assign(it_start, it_end);
-    }
-    return res; 
 }
 
 sorted_ip_t ip_storage::get_addr_with_byte(const sorted_ip_t& view_sorted_ip, uint8_t byte_val) const {
